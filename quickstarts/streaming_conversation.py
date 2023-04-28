@@ -58,26 +58,31 @@ async def main():
     microphone_input, speaker_output = create_microphone_input_and_speaker_output(
         streaming=True, use_default_devices=False
     )
-    
     conversation = StreamingConversation(
         output_device=speaker_output,
-        transcriber=DeepgramTranscriber(
-            DeepgramTranscriberConfig.from_input_device(
+        transcriber=AssemblyAITranscriber(
+            AssemblyAITranscriberConfig.from_input_device(
                 microphone_input, endpointing_config=PunctuationEndpointingConfig()
             )
+    # conversation = StreamingConversation(
+    #     output_device=speaker_output,
+    #     transcriber=DeepgramTranscriber(
+    #         DeepgramTranscriberConfig.from_input_device(
+    #             microphone_input, endpointing_config=PunctuationEndpointingConfig()
+    #         )
         ),
         agent=ChatGPTAgent(
             ChatGPTAgentConfig(
-                initial_message=BaseMessage(text="What up"),
-                prompt_preamble="""You are a helpful gen Z AI assistant. You use slang like um, but, and like a LOT. All of your responses are 10 words or less. Be super chill, use slang like
-hella, down,     fire, totally, but like, slay, vibing, queen, go off, bet, sus, simp, cap, big yikes, main character, dank""",
+                initial_message=BaseMessage(text="Hello AssemblyAI"),
+                prompt_preamble="""You are a helpful AI assistant""",
+                generate_responses=True,
                 cut_off_response=CutOffResponse(),
             )
         ),
         synthesizer=AzureSynthesizer(
             AzureSynthesizerConfig.from_output_device(
-                speaker_output
-            )
+                speaker_output, api_key=vocode.getenv("AZURE_SPEECH_KEY")
+                )
         ),
         logger=logger,
     )
