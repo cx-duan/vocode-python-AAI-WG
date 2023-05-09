@@ -52,19 +52,34 @@ from vocode.streaming.transcriber.assembly_ai_transcriber import AssemblyAITrans
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-
-
+vocode.setenv(
+    OPENAI_API_KEY="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",
+    DEEPGRAM_API_KEY = "e5f80a20c49e64c9901b0c0f94d5268d78c0fc26",
+    ASSEMBLY_AI_API_KEY="7a6c995bf944406c8e6c189f57ba9e1c",
+    AZURE_SPEECH_KEY="88acf3b6585846d281db7230acfac2a8",
+    AZURE_SPEECH_REGION="eastus"
+)
+import inspect
+module_pathAAI = inspect.getfile(AssemblyAITranscriber)
+module_pathDG = inspect.getfile(DeepgramTranscriber)
+print(module_pathAAI)
+print(module_pathDG)
 async def main():
     microphone_input, speaker_output = create_microphone_input_and_speaker_output(
         streaming=True, use_default_devices=False
     )
-    
     conversation = StreamingConversation(
-        output_device=speaker_output,
-        transcriber=DeepgramTranscriber(
-            DeepgramTranscriberConfig.from_input_device(
-                microphone_input, endpointing_config=PunctuationEndpointingConfig()
-            )
+    output_device=speaker_output,
+    transcriber=AssemblyAITranscriber(
+        AssemblyAITranscriberConfig.from_input_device(
+            microphone_input, endpointing_config=PunctuationEndpointingConfig()
+        )
+    # conversation = StreamingConversation(
+    #     output_device=speaker_output,
+    #     transcriber=DeepgramTranscriber(
+    #         DeepgramTranscriberConfig.from_input_device(
+    #             microphone_input, endpointing_config=PunctuationEndpointingConfig()
+    #         )
         ),
         agent=ChatGPTAgent(
             ChatGPTAgentConfig(

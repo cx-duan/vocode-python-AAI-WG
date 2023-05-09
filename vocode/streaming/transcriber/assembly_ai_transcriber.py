@@ -32,8 +32,8 @@ class AssemblyAITranscriber(BaseTranscriber):
             )
         self._ended = False
         self.logger = logger or logging.getLogger(__name__)
-        # if self.transcriber_config.endpointing_config:
-        #     raise Exception("Assembly AI endpointing config not supported yet")
+        if self.transcriber_config.endpointing_config:
+            raise Exception("Assembly AI endpointing config not supported yet")
         self.audio_queue = asyncio.Queue()
 
     async def ready(self):
@@ -89,6 +89,7 @@ class AssemblyAITranscriber(BaseTranscriber):
                         assert False, "Not a websocket 4008 error"
 
                     data = json.loads(result_str)
+                    print(data)
                     is_final = (
                         "message_type" in data
                         and data["message_type"] == "FinalTranscript"
